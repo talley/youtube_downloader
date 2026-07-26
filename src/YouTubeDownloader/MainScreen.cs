@@ -13,12 +13,14 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement;
+using Microsoft.Web.WebView2.Core;
 
 namespace YouTubeDownloader
 {
     public partial class MainScreen : DevExpress.XtraEditors.XtraForm
     {
         private Process _downloadProcess;
+        private bool _webViewInitialized;
         public MainScreen()
         {
             InitializeComponent();
@@ -33,7 +35,21 @@ namespace YouTubeDownloader
         {
             try
             {
-                await webView21.EnsureCoreWebView2Async();
+                string userDataFolder = Path.Combine(
+                    Environment.GetFolderPath(
+                        Environment.SpecialFolder.LocalApplicationData),
+                    "YouTubeDownloader",
+                    "WebView2");
+
+                Directory.CreateDirectory(userDataFolder);
+
+                CoreWebView2Environment environment =
+                    await CoreWebView2Environment.CreateAsync(
+                        null,
+                        userDataFolder,
+                        null);
+
+                await webView21.EnsureCoreWebView2Async(environment);
 
                 string webContentFolder = Path.Combine(
                     Application.StartupPath,
@@ -47,26 +63,40 @@ namespace YouTubeDownloader
                     webContentFolder,
                     CoreWebView2HostResourceAccessKind.Allow);
 
+                _webViewInitialized = true;
 
                 txtOutputFolder.Text = Path.Combine(
-                    Environment.GetFolderPath(Environment.SpecialFolder.MyVideos),
+                    Environment.GetFolderPath(
+                        Environment.SpecialFolder.MyVideos),
                     "YouTube");
 
                 Directory.CreateDirectory(txtOutputFolder.Text);
+
                 lblStatus.Text = "Ready";
             }
             catch (Exception ex)
             {
+                _webViewInitialized = false;
+
                 MessageBox.Show(
-                    "WebView2 could not be initialized.\n\n" + ex.Message,
+                    "WebView2 could not be initialized.\n\n" +
+                    ex.Message +
+                    "\n\nClose all copies of the application and try again.",
                     "WebView2 error",
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Error);
             }
-        }
+
+        } //end
 
         private async void txtYouTubeUrl_EditValueChanged(object sender, EventArgs e)
         {
+            if (!_webViewInitialized ||
+         webView21.CoreWebView2 == null)
+            {
+                return;
+            }
+
             string url = txtYouTubeUrl.Text.Trim();
             string videoId;
 
@@ -77,16 +107,16 @@ namespace YouTubeDownloader
 
             try
             {
-                await webView21.EnsureCoreWebView2Async();
                 webView21.Source = new Uri(
-                   "https://youtubeapp.local/player.html?videoId=" +
-                   Uri.EscapeDataString(videoId));
+                    "https://youtubeapp.local/player.html?videoId=" +
+                    Uri.EscapeDataString(videoId));
             }
-            catch
+            catch (Exception ex)
             {
-                // Do not interrupt URL entry if preview initialization fails.
+                lblStatus.Text =
+                    "Unable to preview the video: " + ex.Message;
             }
-        }
+        } //end
 
         private async void btnConvert_Click(object sender, EventArgs e)
         {
@@ -457,6 +487,11 @@ namespace YouTubeDownloader
 
         private void btnBrowse_Click(object sender, EventArgs e)
         {
+            SetDirPath();
+        } //end of btnBrowse_Click
+
+        private void SetDirPath()
+        {
             using (FolderBrowserDialog dialog = new FolderBrowserDialog())
             {
                 dialog.Description =
@@ -467,10 +502,14 @@ namespace YouTubeDownloader
                 if (dialog.ShowDialog() == DialogResult.OK)
                 {
                     txtOutputFolder.Text = dialog.SelectedPath;
+                    if (!Directory.Exists(txtOutputFolder.Text))
+                    {
+                        Directory.CreateDirectory(txtOutputFolder.Text);
+                    }
+                    txtYouTubeUrl.Enabled = true;
                 }
             }
-        } //end of btnBrowse_Click
-
+        }
 
         private static string GetQueryParameter(
          Uri uri,

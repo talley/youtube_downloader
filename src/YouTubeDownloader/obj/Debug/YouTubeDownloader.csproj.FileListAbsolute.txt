@@ -76,3 +76,15 @@ C:\MyApps\2026MS\youtube_downloader\src\YouTubeDownloader\obj\Debug\YouTubeDownl
 C:\MyApps\2026MS\youtube_downloader\src\YouTubeDownloader\obj\Debug\YouTubeD.69BCFF06.Up2Date
 C:\MyApps\2026MS\youtube_downloader\src\YouTubeDownloader\obj\Debug\YouTubeDownloader.exe
 C:\MyApps\2026MS\youtube_downloader\src\YouTubeDownloader\obj\Debug\YouTubeDownloader.pdb
+C:\MyApps\2026MS\youtube_downloader\src\YouTubeDownloader\bin\Debug\LiteDB.dll
+C:\MyApps\2026MS\youtube_downloader\src\YouTubeDownloader\bin\Debug\System.Buffers.dll
+C:\MyApps\2026MS\youtube_downloader\src\YouTubeDownloader\bin\Debug\System.Memory.dll
+C:\MyApps\2026MS\youtube_downloader\src\YouTubeDownloader\bin\Debug\System.Numerics.Vectors.dll
+C:\MyApps\2026MS\youtube_downloader\src\YouTubeDownloader\bin\Debug\System.Runtime.CompilerServices.Unsafe.dll
+C:\MyApps\2026MS\youtube_downloader\src\YouTubeDownloader\bin\Debug\LiteDB.xml
+C:\MyApps\2026MS\youtube_downloader\src\YouTubeDownloader\bin\Debug\System.Buffers.xml
+C:\MyApps\2026MS\youtube_downloader\src\YouTubeDownloader\bin\Debug\System.Memory.xml
+C:\MyApps\2026MS\youtube_downloader\src\YouTubeDownloader\bin\Debug\System.Numerics.Vectors.xml
+C:\MyApps\2026MS\youtube_downloader\src\YouTubeDownloader\bin\Debug\System.Runtime.CompilerServices.Unsafe.xml
+C:\MyApps\2026MS\youtube_downloader\src\YouTubeDownloader\obj\Debug\YouTubeDownloader.csproj.SuggestedBindingRedirects.cache
+C:\MyApps\2026MS\youtube_downloader\src\YouTubeDownloader\obj\Debug\YouTubeDownloader.exe.config

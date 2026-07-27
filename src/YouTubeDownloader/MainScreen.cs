@@ -14,6 +14,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 using Microsoft.Web.WebView2.Core;
+using YouTubeDownloader.Helpers;
 
 namespace YouTubeDownloader
 {
@@ -65,14 +66,28 @@ namespace YouTubeDownloader
 
                 _webViewInitialized = true;
 
-                txtOutputFolder.Text = Path.Combine(
-                    Environment.GetFolderPath(
-                        Environment.SpecialFolder.MyVideos),
-                    "YouTube");
 
-                Directory.CreateDirectory(txtOutputFolder.Text);
+                // get saved paths
+                var paths = LiteDbHelper.Get();
+                if (paths.Any())
+                {
+                    var ordered_paths=paths.OrderByDescending(p => p.CreatedOn);
+                    var ordered_path = ordered_paths.Take(1).SingleOrDefault();
+                    txtOutputFolder.Text = ordered_path.Path;
+                    txtYouTubeUrl.Enabled = true;
+                }
+                else
+                {
 
-                lblStatus.Text = "Ready";
+                    txtOutputFolder.Text = Path.Combine(
+                        Environment.GetFolderPath(
+                            Environment.SpecialFolder.MyVideos),
+                        "YouTube");
+
+                    Directory.CreateDirectory(txtOutputFolder.Text);
+
+                    lblStatus.Text = "Ready";
+                }
             }
             catch (Exception ex)
             {
@@ -89,7 +104,7 @@ namespace YouTubeDownloader
 
         } //end
 
-        private async void txtYouTubeUrl_EditValueChanged(object sender, EventArgs e)
+        private  void txtYouTubeUrl_EditValueChanged(object sender, EventArgs e)
         {
             if (!_webViewInitialized ||
          webView21.CoreWebView2 == null)
@@ -507,6 +522,12 @@ namespace YouTubeDownloader
                         Directory.CreateDirectory(txtOutputFolder.Text);
                     }
                     txtYouTubeUrl.Enabled = true;
+                    btnBrowse.Enabled = false;
+                    var data = new LiteDbData
+                    {
+                         Path = txtOutputFolder.Text,
+                    };
+                    LiteDbHelper.Insert(data);
                 }
             }
         }
